@@ -5,6 +5,7 @@ dep 'devstack.repo' do
 end
 
 dep 'devstack.variable_file' do
+  requires 'devstack.repo'
   met? { variable_path. p.exists? }
   meet { shell "touch #{variable_path}" }
 end
@@ -39,15 +40,10 @@ dep 'devstack.service_token' do
   meet { set_variable("SERVICE_TOKEN","tokentoken") }
 end
 
-
-
 dep 'devstack' do 
-  dep 'devstack.repo'
-  dep 'devstack.admin_password'
-  dep 'devstack.mysql_password'
-  dep 'devstack.rabbit_password'
-  dep 'devstack.service_password'
-  dep 'devstack.service_token'
+  requires 'devstack.admin_password', 'devstack.mysql_password', 'devstack.rabbit_password', 'devstack.service_password', 'devstack.service_token'
+    met? {shell "curl localhost" }
+  meet { shell "#{path}/stack.sh" }
 end
 
 def set_variable(name, value)
